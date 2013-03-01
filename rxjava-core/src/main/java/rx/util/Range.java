@@ -16,6 +16,9 @@
 package rx.util;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 import java.util.*;
 
@@ -27,7 +30,7 @@ public final class Range implements Iterable<Integer> {
     private final int step;
 
     public static Range createWithCount(int start, int count) {
-        return create(start, start * (count + 1));
+        return create(start, start + count);
     }
 
     public static Range create(int start, int end) {
@@ -104,4 +107,35 @@ public final class Range implements Iterable<Integer> {
         }
 
     }
+	
+    @RunWith(Parameterized.class)
+    public static class ParameterizedCountUnitTest {
+        
+        private int start;
+        private int count;
+        private List<Integer> expected;
+        
+        public ParameterizedCountUnitTest (int start, int count, List<Integer> expected) {
+            this.start = start;
+            this.count = count;
+            this.expected = expected;
+        }
+        
+        @Parameters
+        public static List<?> generateData() {
+            return Arrays.asList(new Object[][] {
+                    {1, 1, Arrays.asList(1)},
+                    {2, 4, Arrays.asList(2, 3, 4, 5)},
+                    {4, 1, Arrays.asList(4)},
+                    {0, 1, Arrays.asList(0)},
+                    {-2, 2, Arrays.asList(-2, -1)},
+                    {0, -1, Collections.EMPTY_LIST}
+            });
+        }
+        
+        @Test
+        public void testRangeWithCount() {
+           assertEquals(this.expected, UnitTest.toList(Range.createWithCount(this.start, this.count)));
+        }
+    } 	
 }
